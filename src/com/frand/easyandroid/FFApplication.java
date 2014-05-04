@@ -103,12 +103,10 @@ public class FFApplication extends Application implements FFIResponseListener {
 				super.onConnect(type);
 				FFApplication.this.onConnect(type);
 			}
-
 			@Override
 			public void onDisConnect() {
 				super.onDisConnect();
 				FFApplication.this.onDisConnect();
-
 			}
 		};
 		FFNetworkStateReceiver.registerObserver(taNetChangeObserver);
@@ -155,7 +153,6 @@ public class FFApplication extends Application implements FFIResponseListener {
 	}
 
 	protected void onPreCreateApplication() {
-
 	}
 
 	public FFIConfig getPreferenceConfig() {
@@ -290,7 +287,6 @@ public class FFApplication extends Application implements FFIResponseListener {
 		if(commandKey.equals(FFActivityCommand.FFACTIVITYCOMMAND)) {
 			new FFActivityScanner(this).run();
 		} else {
-			
 		}
 	}
 	
@@ -327,7 +323,6 @@ public class FFApplication extends Application implements FFIResponseListener {
 
 	@Override
 	public void onStart() {
-
 	}
 
 	@Override
@@ -337,7 +332,6 @@ public class FFApplication extends Application implements FFIResponseListener {
 
 	@Override
 	public void onRuning(FFResponse response) {
-
 	}
 
 	@Override
@@ -373,7 +367,5 @@ public class FFApplication extends Application implements FFIResponseListener {
 
 	@Override
 	public void onFinish() {
-
 	}
-
 }
