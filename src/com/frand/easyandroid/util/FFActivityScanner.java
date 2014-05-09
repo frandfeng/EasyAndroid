@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.frand.easyandroid.FFApplication;
+import com.frand.easyandroid.log.FFLogger;
 
 import android.content.Context;
 

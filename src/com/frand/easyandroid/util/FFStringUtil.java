@@ -15,6 +15,9 @@
  */
 package com.frand.easyandroid.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +25,7 @@ import java.util.regex.Pattern;
  * @author frandfeng
  * @time 2014-4-17 下午4:07:31 class description
  */
-public class FFTextUtil {
+public class FFStringUtil {
 
 	/**
 	 * 判断是否为数字
@@ -39,5 +42,18 @@ public class FFTextUtil {
 		}
 		return isMatches;
 	}
-
+	
+	/** 
+     * 获取错误的信息  
+     * @param arg1 
+     * @return 
+     */  
+	public static String getErrorInfo(Throwable arg1) {  
+        Writer writer = new StringWriter();  
+        PrintWriter pw = new PrintWriter(writer);  
+        arg1.printStackTrace(pw);  
+        pw.close();  
+        String error= writer.toString();  
+        return error;  
+    }
 }

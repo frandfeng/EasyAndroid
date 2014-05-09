@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 import android.content.Context;
 import android.content.res.AssetManager;

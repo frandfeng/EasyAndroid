@@ -17,7 +17,7 @@ package com.frand.easyandroid.command;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFCommandQueue {
 	private LinkedBlockingQueue<FFICommand> theQueue = new LinkedBlockingQueue<FFICommand>();

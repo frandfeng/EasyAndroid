@@ -33,7 +33,7 @@ import com.frand.easyandroid.db.sql.FFSqlBuilder;
 import com.frand.easyandroid.db.util.FFDBUtils;
 import com.frand.easyandroid.db.util.FFSqlUtil;
 import com.frand.easyandroid.exception.FFDBException;
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFDB {
 	private String sqlString = "";

@@ -26,7 +26,7 @@ import com.frand.easyandroid.db.annotation.FFPrimaryKey;
 import com.frand.easyandroid.db.entity.FFArrayList;
 import com.frand.easyandroid.db.util.FFDBUtils;
 import com.frand.easyandroid.exception.FFDBException;
-import com.frand.easyandroid.util.FFTextUtil;
+import com.frand.easyandroid.util.FFStringUtil;
 import com.frand.easyandroid.util.FFFieldUtil;
 
 public class FFUpdateSqlBuilder extends FFSqlBuilder {
@@ -50,7 +50,7 @@ public class FFUpdateSqlBuilder extends FFSqlBuilder {
 			NameValuePair nameValuePair = needUpdate.get(i);
 			stringBuilder.append(nameValuePair.getName()).append(" = ");
 			String value = nameValuePair.getValue().toString();
-			if(FFTextUtil.isNumeric(value)) {
+			if(FFStringUtil.isNumeric(value)) {
 				stringBuilder.append(value);
 			} else {
 				stringBuilder.append("'"+ nameValuePair.getValue() + "'");

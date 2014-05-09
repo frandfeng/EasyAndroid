@@ -18,17 +18,16 @@ package com.frand.easyandroid.netstate;
 import com.frand.easyandroid.netstate.FFNetWorkUtil.netType;
 
 public class FFNetChangeObserver {
+	
 	/**
 	 * 网络连接连接时调用
 	 */
 	public void onConnect(netType type) {
-
 	}
 
 	/**
 	 * 当前没有网络连接
 	 */
 	public void onDisConnect() {
-
 	}
 }

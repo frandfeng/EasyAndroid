@@ -15,7 +15,7 @@
  */
 package com.frand.easyandroid.db;
 
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

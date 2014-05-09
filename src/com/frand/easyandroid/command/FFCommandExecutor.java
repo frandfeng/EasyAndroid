@@ -19,7 +19,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 import com.frand.easyandroid.exception.FFNoCommandException;
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFCommandExecutor {
 	private final HashMap<String, Class<? extends FFICommand>> commands = new HashMap<String, Class<? extends FFICommand>>();

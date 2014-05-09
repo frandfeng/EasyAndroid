@@ -27,8 +27,13 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 public abstract class FFActivity extends Activity {
+	
 	private String moduleName = "";
 
+	public String getModuleName() {
+		return moduleName;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		onPreOnCreate(savedInstanceState);

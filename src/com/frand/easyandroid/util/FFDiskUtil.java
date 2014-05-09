@@ -16,6 +16,9 @@
 package com.frand.easyandroid.util;
 
 import java.io.File;
+import java.io.IOException;
+
+import com.frand.easyandroid.log.FFLogger;
 
 import android.content.Context;
 import android.os.Environment;
@@ -27,34 +30,44 @@ import android.os.Environment;
  */
 public class FFDiskUtil {
 	
-	public static final String DOWNLOAD = "/download";
-	public static final String CACHE = "/cache";
+	public static final String DOWNLOAD = "download";
+	public static final String CACHE = "cache";
+	public static final String LOGGER = "logger";
 	
-	public static String getDownLoadPath(Context context) {
-		return getPackagePath(context)+DOWNLOAD;
+	public static File getExternalDownLoadDir(Context context) {
+		return getExternalFileDir(context, DOWNLOAD);
 	}
 	
-	public static String getCachePath(Context context) {
-		return getPackagePath(context)+CACHE;
+	public static File getExternalCacheDir(Context context) {
+		return getExternalFileDir(context, CACHE);
 	}
 	
-	private static String getPackagePath(Context context) {
-		return getSDPath()+"/Android/data/"+context.getPackageName();
+	public static File getExternalLoggerDir(Context context) {
+		return getExternalFileDir(context, LOGGER);
 	}
 	
-	private static String getSDPath() {
-		File sdDir = null;
-		//判断sd卡是否存在,如果存在且已分区，返回sd卡的目录，如果没有，则直接返回一个字串作为目录
-		boolean sdCardExist = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-		if (sdCardExist) {
-			sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-		} else {
-			sdDir = new File("/mnt/sdcard");
+	public static File getExternalFileDir(Context context, String fileName) {
+		File fileDir = new File(getExternalPackageDir(context), fileName);
+		if (!fileDir.exists()) {
+			if (!fileDir.mkdirs()) {
+				FFLogger.i(FFDiskUtil.class.getName(), "Unable to create external cache directory");
+				return null;
+			}
+			try {
+				new File(fileDir, ".nomedia").createNewFile();
+			} catch (IOException e) {
+				FFLogger.i(FFDiskUtil.class.getName(), "Can't create \".nomedia\" file in application external cache directory");
+			}
 		}
-		return sdDir.toString();
-	}
-	public static String getPath(Context context, String folder) {
-		return context.getExternalCacheDir().getAbsolutePath()+"/../"+folder+"/";
+		return fileDir;
 	}
 	
+	public static File getExternalPackageDir(Context context) {
+		return new File(getExternalDataDir(), context.getPackageName());
+	}
+	
+	public static File getExternalDataDir() {
+		File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
+		return dataDir;
+	}
 }

@@ -74,6 +74,8 @@ public class FFAppException implements UncaughtExceptionHandler {
 			public void run() {
 				Looper.prepare();
 				Toast.makeText(mContext, "恭喜您中奖了", Toast.LENGTH_SHORT).show();
+				android.os.Process.killProcess(android.os.Process.myPid());
+				System.exit(0);
 				Looper.loop();
 			};
 		}.start();

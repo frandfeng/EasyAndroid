@@ -33,18 +33,19 @@ import com.frand.easyandroid.command.FFResponse;
 import com.frand.easyandroid.config.FFIConfig;
 import com.frand.easyandroid.config.FFPreferConfig;
 import com.frand.easyandroid.config.FFProperConfig;
+import com.frand.easyandroid.db.FFDB;
 import com.frand.easyandroid.db.FFDBPool;
 import com.frand.easyandroid.exception.FFAppException;
 import com.frand.easyandroid.exception.FFNoCommandException;
 import com.frand.easyandroid.layoutloader.FFLayoutLoader;
 import com.frand.easyandroid.layoutloader.FFILayoutLoader;
+import com.frand.easyandroid.log.FFLogger;
 import com.frand.easyandroid.netstate.FFNetChangeObserver;
 import com.frand.easyandroid.netstate.FFNetWorkUtil;
 import com.frand.easyandroid.netstate.FFNetworkStateReceiver;
 import com.frand.easyandroid.netstate.FFNetWorkUtil.netType;
 import com.frand.easyandroid.util.FFActivityScanner;
 import com.frand.easyandroid.util.FFInjector;
-import com.frand.easyandroid.util.FFLogger;
 
 public class FFApplication extends Application implements FFIResponseListener {
 	/** 配置器 为Preference */
@@ -56,6 +57,7 @@ public class FFApplication extends Application implements FFIResponseListener {
 			= new HashMap<String, Class<?>>();
 	public static int display_width = 0;
 	public static int display_height = 0;
+	public static FFDB ffdb;
 	/** 获取布局文件ID加载器 */
 	private FFILayoutLoader mLayoutLoader;
 	/** 加载类注入器 */
@@ -70,12 +72,11 @@ public class FFApplication extends Application implements FFIResponseListener {
 	/** ThinkAndroid 应用程序运行Activity管理器 */
 	private FFAppManager mAppManager;
 	private Boolean networkAvailable = false;
-	private FFNetChangeObserver taNetChangeObserver;
+	private FFNetChangeObserver ffNetChangeObserver;
 
-	public FFDBPool getmFfdbPool(String dbName, int dbVersion) {
+	public FFDBPool getmFfdbPool() {
 		if (mFfdbPool == null) {
-			mFfdbPool = FFDBPool.getInstance(this, dbName, dbVersion);
-			mFfdbPool.initDBs();
+			mFfdbPool = FFDBPool.getInstance(this);
 		}
 		return mFfdbPool;
 	}
@@ -95,9 +96,11 @@ public class FFApplication extends Application implements FFIResponseListener {
 		// getConfig(PREFERENCECONFIG).setString("key", "value");
 		display_width = getResources().getDisplayMetrics().widthPixels;
 		display_height = getResources().getDisplayMetrics().heightPixels;
+		initLogger();
+		initDB();
 		// 初始化网络状态，初始化网络断开或链接的监听器并设置监听
-		networkAvailable = FFNetWorkUtil.isNetworkAvailable(this);
-		taNetChangeObserver = new FFNetChangeObserver() {
+		networkAvailable = FFNetWorkUtil.isNetworkConnected(this);
+		ffNetChangeObserver = new FFNetChangeObserver() {
 			@Override
 			public void onConnect(netType type) {
 				super.onConnect(type);
@@ -109,7 +112,7 @@ public class FFApplication extends Application implements FFIResponseListener {
 				FFApplication.this.onDisConnect();
 			}
 		};
-		FFNetworkStateReceiver.registerObserver(taNetChangeObserver);
+		FFNetworkStateReceiver.setObserver(ffNetChangeObserver);
 		// 注册App异常崩溃处理器
 		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
 		// 开始初始化命令执行器，生成一个线程池来运行命令
@@ -118,7 +121,25 @@ public class FFApplication extends Application implements FFIResponseListener {
 		registerCommand(FFActivityCommand.FFACTIVITYCOMMAND,
 				FFActivityCommand.class);
 	}
-
+	
+	/**
+	 * 初始化数据库
+	 * 注意：初始化数据库完成后查看是否需要将log打印到数据库中，如果配置中没有初始化数据库，则将log打印到数据库无效
+	 */
+	private void initDB() {
+		if(getConfig(PROPERTIESCONFIG).getBoolean("isNeedDB", false)==true) {
+			getmFfdbPool().initDBs(getConfig(PROPERTIESCONFIG).getString("dbName", getApplicationContext().getPackageName()),
+					getConfig(PROPERTIESCONFIG).getInt("dbVersion", 1));
+			ffdb = getmFfdbPool().getFreeDB();
+			FFLogger.addPrintToDBLogger(getApplicationContext(), getConfig(PROPERTIESCONFIG).getBoolean("isPrintToDBLogger", false));
+		}
+	}
+	
+	private void initLogger() {
+		FFLogger.addPrintToLoggerCatLogger(getConfig(PROPERTIESCONFIG).getBoolean("isPrintToLoggerCat", false));
+		FFLogger.addPrintToFileLogger(getApplicationContext(), getConfig(PROPERTIESCONFIG).getBoolean("isPrintToFileLogger", false));
+	}
+	
 	/**
 	 * 当前没有网络连接
 	 */
@@ -223,6 +244,7 @@ public class FFApplication extends Application implements FFIResponseListener {
 	
 	public void onActivityFinished(FFActivity activity) {
 		mAppManager.removeActivity(activity);
+		FFLogger.i(this, "activity removed "+activity.getModuleName());
 	}
 	
 	public void onActivityResumed() {

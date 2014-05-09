@@ -15,7 +15,7 @@
  */
 package com.frand.easyandroid.command;
 
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFThreadPool {
 	// 线程的最大数量

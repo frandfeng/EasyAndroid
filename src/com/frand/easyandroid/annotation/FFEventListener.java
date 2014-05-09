@@ -18,6 +18,8 @@ package com.frand.easyandroid.annotation;
 import java.lang.reflect.Method;
 
 import com.frand.easyandroid.exception.FFViewException;
+import com.frand.easyandroid.log.FFLogger;
+import com.frand.easyandroid.util.FFStringUtil;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,15 +60,14 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 			return null;
 		Method method = null;
 		try {
-			method = handler.getClass().getDeclaredMethod(methodName,
-					View.class);
+			method = handler.getClass().getDeclaredMethod(methodName, View.class);
 			if (method != null) {
 				return method.invoke(handler, params);
 			} else {
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 		return null;
 	}
@@ -97,7 +98,7 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 		return false;
 	}
@@ -126,7 +127,7 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 		return;
 	}
@@ -159,7 +160,7 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 		return false;
 	}
@@ -200,7 +201,7 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 	}
 
@@ -218,7 +219,7 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				throw new FFViewException("no such method");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			FFLogger.e(FFEventListener.class.getName(), FFStringUtil.getErrorInfo(e));
 		}
 	}
 

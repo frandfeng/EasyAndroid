@@ -19,15 +19,15 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import com.frand.easyandroid.db.FFDBHelper.FFDBListener;
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 import android.app.Application;
 import android.content.Context;
 
 public class FFDBPool {
 	
-	private static String dbName = "easyandroid";
-	private static int dbVersion = 1;
+	private String dbName = "easyandroid";
+	private int dbVersion = 1;
 	private static FFDBPool instance;
 	private static FFDBListener mListener;
 	private int initDBNum = 1; // 连接池的初始大小
@@ -41,10 +41,8 @@ public class FFDBPool {
 		this.context = context;
 	}
 
-	public static FFDBPool getInstance(Application application, String dbName, int dbVersion) {
+	public static FFDBPool getInstance(Application application) {
 		if(instance==null) {
-			FFDBPool.dbName = dbName;
-			FFDBPool.dbVersion = dbVersion;
 			FFDBPool.mListener = (FFDBListener) application;
 			instance = new FFDBPool(application.getApplicationContext());
 			FFLogger.i(instance, "db pool has been init");
@@ -112,10 +110,12 @@ public class FFDBPool {
 	 * 
 	 * 创建一个数据库连接池，连接池中的可用连接的数量采用类成员 initialSQLiteDatabase 中设置的值
 	 */
-	public synchronized void initDBs() {
+	public synchronized void initDBs(String dbName, int dbVersion) {
+		this.dbName = dbName;
+		this.dbVersion = dbVersion;
 		if (ffdbs==null) {
 			ffdbs = new Vector<FFDB>();
-			createDB(initDBNum);
+			createDB(initDBNum, dbName, dbVersion);
 			FFLogger.i(this, "ffdbs has been init");
 		}
 	}
@@ -126,9 +126,9 @@ public class FFDBPool {
 	 * @param numSQLiteDatabase
 	 *            要创建的数据库连接的数目
 	 */
-	private void createDB(int dbNum) {
+	private void createDB(int dbNum, String dbName, int dbVersion) {
 		for (int i=0; i<dbNum&&ffdbs.size()<maxDBNum; i++) {
-			newDB();
+			newDB(dbName, dbVersion);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class FFDBPool {
 	 * 
 	 * @return 返回一个新创建的数据库连接
 	 */
-	private void newDB() {
+	private void newDB(String dbName, int dbVersion) {
 		FFDB ffdb = new FFDB(context, dbName, dbVersion, mListener);
 		ffdb.openDatabase(isWrite);
 		ffdbs.addElement(ffdb);
@@ -169,7 +169,7 @@ public class FFDBPool {
 	private FFDB getFreeDBOrCreate() {
 		FFDB sqLiteDatabase = findFreeDBInPool();
 		if (sqLiteDatabase == null) {
-			createDB(increDBNum);
+			createDB(increDBNum, dbName, dbVersion);
 			sqLiteDatabase = findFreeDBInPool();
 		}
 		return sqLiteDatabase;

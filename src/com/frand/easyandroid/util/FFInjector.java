@@ -95,12 +95,10 @@ public class FFInjector {
 		try {
 			Object object = field.get(activity);
 			if (object instanceof View) {
-				((View) object)
-						.setOnClickListener(new FFEventListener(activity)
-								.onclick(clickMethod));
+				((View) object).setOnClickListener(new FFEventListener(activity).onclick(clickMethod));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 

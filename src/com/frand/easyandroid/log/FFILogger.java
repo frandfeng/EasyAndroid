@@ -16,19 +16,14 @@
 package com.frand.easyandroid.log;
 
 public interface FFILogger {
-	void v(String tag, String message);
-
-	void d(String tag, String message);
-
-	void i(String tag, String message);
-
-	void w(String tag, String message);
-
-	void e(String tag, String message);
-
-	void open();
-
-	void close();
-
-	void println(int priority, String tag, String message);
+	
+	public void v(String tag, String message);
+	public void d(String tag, String message);
+	public void i(String tag, String message);
+	public void w(String tag, String message);
+	public void e(String tag, String message);
+	public void open();
+	public void close();
+	public void println(int priority, String tag, String message);
+	
 }

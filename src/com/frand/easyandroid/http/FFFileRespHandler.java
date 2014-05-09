@@ -28,7 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import com.frand.easyandroid.exception.FFFileExistException;
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFFileRespHandler extends FFHttpRespHandler {
 	

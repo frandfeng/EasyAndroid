@@ -24,7 +24,7 @@ import com.frand.easyandroid.db.annotation.FFPrimaryKey;
 import com.frand.easyandroid.db.entity.FFArrayList;
 import com.frand.easyandroid.db.util.FFDBUtils;
 import com.frand.easyandroid.exception.FFDBException;
-import com.frand.easyandroid.util.FFTextUtil;
+import com.frand.easyandroid.util.FFStringUtil;
 import com.frand.easyandroid.util.FFFieldUtil;
 
 import android.text.TextUtils;
@@ -173,7 +173,7 @@ public abstract class FFSqlBuilder {
 			for (int i = 0; i < conditions.size(); i++) {
 				NameValuePair nameValuePair = conditions.get(i);
 				stringBuilder.append(nameValuePair.getName()).append(" = ")
-					.append(FFTextUtil.isNumeric(nameValuePair
+					.append(FFStringUtil.isNumeric(nameValuePair
 					.getValue().toString()) ? nameValuePair
 					.getValue() : "'" + nameValuePair.getValue() + "'");
 				if (i + 1 < conditions.size()) {

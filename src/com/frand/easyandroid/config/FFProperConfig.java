@@ -22,15 +22,16 @@ import java.lang.reflect.Field;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.frand.easyandroid.log.FFLogger;
 import com.frand.easyandroid.util.FFFieldUtil;
 
 import android.content.Context;
 
 public class FFProperConfig implements FFIConfig {
 	/** assets中配置信息文件 */
-	private String assetsPath = "/assets/easyandroid.properties";
+	private String assetsPath = "/assets/config.properties";
 	/** 软件Files文件夹中配置信息文件 */
-	private String filesPath = "easyandroid.properties";
+	private String filesPath = "config.properties";
 	private static FFProperConfig mPropertiesConfig;
 	private static final String LOADFLAG = "assetsload";
 	private Context mContext;
@@ -55,16 +56,16 @@ public class FFProperConfig implements FFIConfig {
 
 	@Override
 	public void loadConfig() {
-		Properties props = new Properties();
+		mProperties = new Properties();
 		InputStream in = FFProperConfig.class.getResourceAsStream(assetsPath);
 		try {
 			if (in != null) {
-				props.load(in);
-				Enumeration<?> e = props.propertyNames();
+				mProperties.load(in);
+				Enumeration<?> e = mProperties.propertyNames();
 				if (e.hasMoreElements()) {
 					while (e.hasMoreElements()) {
 						String s = (String) e.nextElement();
-						props.setProperty(s, props.getProperty(s));
+						mProperties.setProperty(s, mProperties.getProperty(s));
 					}
 				}
 			}
@@ -74,7 +75,6 @@ public class FFProperConfig implements FFIConfig {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class FFProperConfig implements FFIConfig {
 			InputStream in = mContext.openFileInput(filesPath);
 			props.load(in);
 		} catch (IOException e) {
-			e.printStackTrace();
+			FFLogger.i(this, "properties file not found");
 		}
 		return props;
 	}
@@ -213,7 +213,7 @@ public class FFProperConfig implements FFIConfig {
 	@Override
 	public boolean getBoolean(String key, Boolean defaultValue) {
 		try {
-			return Boolean.valueOf(getString(key, ""));
+			return Boolean.valueOf(getString(key, String.valueOf(defaultValue)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

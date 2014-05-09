@@ -15,7 +15,7 @@
  */
 package com.frand.easyandroid.command;
 
-import com.frand.easyandroid.util.FFLogger;
+import com.frand.easyandroid.log.FFLogger;
 
 public class FFCommandThread implements Runnable {
 	private int threadId;

@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class FFPreferConfig implements FFIConfig {
+	
 	private static FFIConfig mPreferenceConfig;
 	private Context mContext;
 	private Editor edit = null;

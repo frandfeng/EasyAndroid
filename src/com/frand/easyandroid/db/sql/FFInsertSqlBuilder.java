@@ -19,7 +19,7 @@ import org.apache.http.NameValuePair;
 
 import com.frand.easyandroid.db.entity.FFArrayList;
 import com.frand.easyandroid.exception.FFDBException;
-import com.frand.easyandroid.util.FFTextUtil;
+import com.frand.easyandroid.util.FFStringUtil;
 
 public class FFInsertSqlBuilder extends FFSqlBuilder {
 	@Override
@@ -43,7 +43,7 @@ public class FFInsertSqlBuilder extends FFSqlBuilder {
 		for (int i = 0; i < updateFields.size(); i++) {
 			NameValuePair nameValuePair = updateFields.get(i);
 			columns.append(nameValuePair.getName());
-			values.append(FFTextUtil.isNumeric(nameValuePair.getValue().toString()) ? nameValuePair
+			values.append(FFStringUtil.isNumeric(nameValuePair.getValue().toString()) ? nameValuePair
 					.getValue() : "'" + nameValuePair.getValue() + "'");
 			if (i + 1 < updateFields.size()) {
 				columns.append(", ");

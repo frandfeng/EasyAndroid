@@ -22,17 +22,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class FFNetWorkUtil {
+	
 	public static enum netType {
 		wifi, CMNET, CMWAP, noneNet
 	}
 
 	/**
 	 * 网络是否可用
-	 * 
 	 * @param context
 	 * @return
 	 */
-	public static boolean isNetworkAvailable(Context context) {
+	public static boolean isNetworkConnected(Context context) {
 		ConnectivityManager mgr = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo[] info = mgr.getAllNetworkInfo();
@@ -48,11 +48,10 @@ public class FFNetWorkUtil {
 
 	/**
 	 * 判断是否有网络连接
-	 * 
 	 * @param context
 	 * @return
 	 */
-	public static boolean isNetworkConnected(Context context) {
+	public static boolean isNetworkAvail(Context context) {
 		if (context != null) {
 			ConnectivityManager mConnectivityManager = (ConnectivityManager) context
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -67,11 +66,10 @@ public class FFNetWorkUtil {
 
 	/**
 	 * 判断WIFI网络是否可用
-	 * 
 	 * @param context
 	 * @return
 	 */
-	public static boolean isWifiConnected(Context context) {
+	public static boolean isWifiAvail(Context context) {
 		if (context != null) {
 			ConnectivityManager mConnectivityManager = (ConnectivityManager) context
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -86,11 +84,10 @@ public class FFNetWorkUtil {
 
 	/**
 	 * 判断MOBILE网络是否可用
-	 * 
 	 * @param context
 	 * @return
 	 */
-	public static boolean isMobileConnected(Context context) {
+	public static boolean isMobileAvail(Context context) {
 		if (context != null) {
 			ConnectivityManager mConnectivityManager = (ConnectivityManager) context
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -105,7 +102,6 @@ public class FFNetWorkUtil {
 
 	/**
 	 * 获取当前网络连接的类型信息
-	 * 
 	 * @param context
 	 * @return
 	 */
@@ -123,13 +119,8 @@ public class FFNetWorkUtil {
 	}
 
 	/**
-	 * 
-	 * @author 白猫
-	 * 
-	 *         获取当前的网络状态 -1：没有网络 1：WIFI网络2：wap 网络3：net网络
-	 * 
+	 * 获取当前的网络状态 -1：没有网络 1：WIFI网络2：wap 网络3：net网络
 	 * @param context
-	 * 
 	 * @return
 	 */
 	public static netType getAPNType(Context context) {
@@ -140,19 +131,15 @@ public class FFNetWorkUtil {
 			return netType.noneNet;
 		}
 		int nType = networkInfo.getType();
-
 		if (nType == ConnectivityManager.TYPE_MOBILE) {
 			if (networkInfo.getExtraInfo().toLowerCase(Locale.ENGLISH).equals("cmnet")) {
 				return netType.CMNET;
-			}
-
-			else {
+			} else {
 				return netType.CMWAP;
 			}
 		} else if (nType == ConnectivityManager.TYPE_WIFI) {
 			return netType.wifi;
 		}
 		return netType.noneNet;
-
 	}
 }
