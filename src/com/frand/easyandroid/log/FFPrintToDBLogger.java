@@ -1,6 +1,7 @@
 package com.frand.easyandroid.log;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.frand.easyandroid.FFApplication;
 import com.frand.easyandroid.data.FFLogDataEntity;
@@ -85,11 +86,14 @@ public class FFPrintToDBLogger implements FFILogger {
 		default:
 			break;
 		}
+		logDataEntity.setTime(FFDateUtil.getFormattedDate());
 		logDataEntity.setApplication(context.getPackageName());
 		logDataEntity.setTag(tag);
-		logDataEntity.setText(message);
-		logDataEntity.setTime(FFDateUtil.getFormattedDate());
-		logDataEntity.setVersionCode(FFAppUtil.getAppVersionCode(context));
+		logDataEntity.setMessage(message);
+		logDataEntity.setAppVer(FFAppUtil.getAppVersionName(context));
+		logDataEntity.setBrand(Build.BRAND);
+		logDataEntity.setModel(Build.MODEL);
+		logDataEntity.setSystemVer(Build.VERSION.RELEASE);
 		ffdb.insert(logDataEntity);
 	}
 }

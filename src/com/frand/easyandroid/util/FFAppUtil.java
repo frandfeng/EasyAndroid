@@ -17,4 +17,16 @@ public class FFAppUtil {
 		}
 		return versionCode;
 	}
+	
+	public static String getAppVersionName(Context context) {
+		String versionName = "";
+		try {
+			PackageManager pm = context.getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+			versionName = pi.versionName;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return versionName;
+	}
 }

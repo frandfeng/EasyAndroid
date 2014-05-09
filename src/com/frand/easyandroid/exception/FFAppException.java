@@ -17,6 +17,10 @@ package com.frand.easyandroid.exception;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import com.frand.easyandroid.annotation.FFEventListener;
+import com.frand.easyandroid.log.FFLogger;
+import com.frand.easyandroid.util.FFStringUtil;
+
 import android.content.Context;
 import android.os.Looper;
 import android.widget.Toast;
@@ -65,7 +69,7 @@ public class FFAppException implements UncaughtExceptionHandler {
 	 * @param ex
 	 * @return true:如果处理了该异常信息;否则返回false
 	 */
-	private boolean handledException(Throwable ex) {
+	private boolean handledException(final Throwable ex) {
 		if (ex == null) {
 			return true;
 		}
@@ -73,6 +77,7 @@ public class FFAppException implements UncaughtExceptionHandler {
 			@Override
 			public void run() {
 				Looper.prepare();
+				FFLogger.e(this, FFStringUtil.getErrorInfo(ex));
 				Toast.makeText(mContext, "恭喜您中奖了", Toast.LENGTH_SHORT).show();
 				android.os.Process.killProcess(android.os.Process.myPid());
 				System.exit(0);
