@@ -29,7 +29,7 @@ import android.os.Message;
  */
 public abstract class FFHttpRespHandler {
 
-	protected static Handler handler;
+	protected Handler handler;
 	protected static final int START_MESSAGE = 0;
 	protected static final int PROGRESS_MESSAGE = 1;
 	protected static final int FAILURE_MESSAGE = 2;
@@ -39,7 +39,6 @@ public abstract class FFHttpRespHandler {
 	/**
 	 * FFBaseRespHandler的构造函数，用来初始化此类中的的成员变量
 	 */
-	@SuppressLint("HandlerLeak")
 	public FFHttpRespHandler() {
 		if (Looper.myLooper() != null) {
 			handler = new Handler() {
@@ -80,7 +79,7 @@ public abstract class FFHttpRespHandler {
 	 * @param reqTag 请求的标志
 	 * @param reqUrl 请求的路径
 	 */
-	protected void sendProgressMsg(long totalSize, long currentSize,
+	public void sendProgressMsg(long totalSize, long currentSize,
 			long speed, int reqTag, String reqUrl) {
 		sendMessage(obtainMessage(PROGRESS_MESSAGE, new Object[] { totalSize,
 				currentSize, speed, reqTag, reqUrl }));
@@ -92,7 +91,7 @@ public abstract class FFHttpRespHandler {
 	 * @param reqTag 请求的标志
 	 * @param reqUrl 请求的路径
 	 */
-	protected void sendFailureMsg(Throwable cause, int reqTag, String reqUrl) {
+	public void sendFailureMsg(Throwable cause, int reqTag, String reqUrl) {
 		sendMessage(obtainMessage(FAILURE_MESSAGE, new Object[] {cause, reqTag, reqUrl}));
 	}
 	
@@ -103,7 +102,7 @@ public abstract class FFHttpRespHandler {
 	 * @param reqTag 请求的标志
 	 * @param reqUrl 请求的路径
 	 */
-	protected void sendSuccMsg(String response, int reqTag, String reqUrl) {
+	public void sendSuccMsg(String response, int reqTag, String reqUrl) {
 		sendMessage(obtainMessage(SUCCESS_MESSAGE, new Object[] {response, reqTag, reqUrl}));
 	}
 	
@@ -114,7 +113,7 @@ public abstract class FFHttpRespHandler {
 	 * @param reqTag 请求的标志
 	 * @param reqUrl 请求的路径
 	 */
-	protected void sendFinishMsg(int reqTag, String reqUrl) {
+	public void sendFinishMsg(int reqTag, String reqUrl) {
 		sendMessage(obtainMessage(FINISH_MESSAGE, new Object[] {reqTag, reqUrl}));
 	}
 	
@@ -140,7 +139,7 @@ public abstract class FFHttpRespHandler {
 	 * 发送封装好的msg到handler当中去处理，如果handler是空，则直接发送到函数中去处理
 	 * @param msg
 	 */
-	protected void sendMessage(Message msg) {
+	public void sendMessage(Message msg) {
 		if (handler != null) {
 			handler.sendMessage(msg);
 		} else {

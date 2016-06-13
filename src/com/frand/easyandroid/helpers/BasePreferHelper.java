@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 frandfeng
+ * Copyright (C) 2014-3-31 frandfeng
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.frand.easyandroid.annotation;
+package com.frand.easyandroid.helpers;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-/**
- * 排序用到的注解
- * @author frand
+/** 
+ * @author frandfeng
+ * @time 2014-3-31 下午2:55:34 
+ * class description 
  */
-@Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-public @interface FFCompareAnnotation {
+public class BasePreferHelper {
 	
-	/**
-	 * 选择进行排序属性标识
-	 * @return 返回标识码
-	 */
-	int sortFlag() default 0;
+	public static final String STR_PROJECT_STATE = "project_state";
+	public static final String STR_ERROR_STATE = "error_state";
+	
 }

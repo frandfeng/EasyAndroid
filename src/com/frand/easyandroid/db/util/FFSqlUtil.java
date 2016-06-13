@@ -42,7 +42,7 @@ public class FFSqlUtil {
 	 * @param operate
 	 * @return 构建器
 	 */
-	public static synchronized FFSqlBuilder getSqlBuilder(int operate) {
+	public static synchronized FFSqlBuilder getSqlBuilder(int operate, String tableName) {
 		FFSqlBuilder sqlBuilder = null;
 		switch (operate) {
 		case INSERT:
@@ -60,6 +60,10 @@ public class FFSqlUtil {
 		default:
 			break;
 		}
+		if(tableName!=null&&!tableName.equals("")) {
+			sqlBuilder.setTableName(tableName);
+		}
 		return sqlBuilder;
 	}
+	
 }

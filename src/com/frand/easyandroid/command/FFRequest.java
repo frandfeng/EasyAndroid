@@ -15,9 +15,14 @@
  */
 package com.frand.easyandroid.command;
 
+import android.os.Bundle;
+
 public class FFRequest extends FFBaseEntity {
 	private static final long serialVersionUID = 444834403356593608L;
 	private String requestKey;
+	private Bundle requestBundle;
+	private int inAnim = 0;
+	private int outAnim = 0;
 	private boolean destroyBefore = false;
 
 	public FFRequest() {
@@ -44,6 +49,14 @@ public class FFRequest extends FFBaseEntity {
 		this.requestKey = requestKey;
 	}
 
+	public Bundle getRequestBundle() {
+		return requestBundle;
+	}
+
+	public void setRequestBundle(Bundle requestBundle) {
+		this.requestBundle = requestBundle;
+	}
+
 	public boolean isDestroyBefore() {
 		return destroyBefore;
 	}
@@ -52,4 +65,20 @@ public class FFRequest extends FFBaseEntity {
 		this.destroyBefore = destroyBefore;
 	}
 
+	public int getInAnim() {
+		return inAnim;
+	}
+
+	public void setInAnim(int inAnim) {
+		this.inAnim = inAnim;
+	}
+
+	public int getOutAnim() {
+		return outAnim;
+	}
+
+	public void setOutAnim(int outAnim) {
+		this.outAnim = outAnim;
+	}
+	
 }

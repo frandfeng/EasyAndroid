@@ -15,9 +15,14 @@
  */
 package com.frand.easyandroid.command;
 
+import android.os.Bundle;
+
 public class FFResponse extends FFBaseEntity {
 	private static final long serialVersionUID = 444834403356593608L;
 	private String responseKey;
+	private Bundle responseBundle;
+	private int inAnim = 0;
+	private int outAnim = 0;
 	private boolean destroyBefore = false;
 
 	public FFResponse() {
@@ -31,9 +36,19 @@ public class FFResponse extends FFBaseEntity {
 		this.responseKey = responseKey;
 	}
 
-	public FFResponse(String requestKey, boolean detroyBefore) {
+	public FFResponse(String requestKey, boolean detroyBefore, Bundle requestBundle) {
 		this.responseKey = requestKey;
 		this.destroyBefore = detroyBefore;
+		this.responseBundle = requestBundle;
+	}
+	
+	public FFResponse(String requestKey, boolean detroyBefore,
+			Bundle requestBundle, int inAnim, int outAnim) {
+		this.responseKey = requestKey;
+		this.destroyBefore = detroyBefore;
+		this.responseBundle = requestBundle;
+		this.inAnim = inAnim;
+		this.outAnim = outAnim;
 	}
 
 	public String getResponseKey() {
@@ -44,12 +59,36 @@ public class FFResponse extends FFBaseEntity {
 		this.responseKey = responseKey;
 	}
 
+	public Bundle getResponseBundle() {
+		return responseBundle;
+	}
+
+	public void setResponseBundle(Bundle responseBundle) {
+		this.responseBundle = responseBundle;
+	}
+
 	public boolean isDestroyBefore() {
 		return destroyBefore;
 	}
 
 	public void setDestroyBefore(boolean destroyBefore) {
 		this.destroyBefore = destroyBefore;
+	}
+
+	public int getInAnim() {
+		return inAnim;
+	}
+
+	public void setInAnim(int inAnim) {
+		this.inAnim = inAnim;
+	}
+
+	public int getOutAnim() {
+		return outAnim;
+	}
+
+	public void setOutAnim(int outAnim) {
+		this.outAnim = outAnim;
 	}
 
 }

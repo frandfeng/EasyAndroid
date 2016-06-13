@@ -85,7 +85,9 @@ public abstract class FFSqlBuilder {
 	}
 
 	public void setTableName(Class<?> clazz) {
-		this.tableName = FFDBUtils.getTableName(clazz);
+		if(this.tableName==null||this.tableName.equals("")) {
+			this.tableName = FFDBUtils.getTableName(clazz);
+		}
 	}
 
 	public String getTableName() {

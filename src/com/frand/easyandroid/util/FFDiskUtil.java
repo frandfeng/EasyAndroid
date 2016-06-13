@@ -34,24 +34,45 @@ public class FFDiskUtil {
 	public static final String CACHE = "cache";
 	public static final String LOGGER = "logger";
 	
+	/**
+	 * 获取沙盒中的download地址
+	 * @param context
+	 * @return
+	 */
 	public static File getExternalDownLoadDir(Context context) {
 		return getExternalFileDir(context, DOWNLOAD);
 	}
 	
+	/**
+	 * 获取沙盒中的cache地址
+	 * @param context
+	 * @return
+	 */
 	public static File getExternalCacheDir(Context context) {
 		return getExternalFileDir(context, CACHE);
 	}
 	
+	/**
+	 * 获取沙盒中的logger地址
+	 * @param context
+	 * @return
+	 */
 	public static File getExternalLoggerDir(Context context) {
 		return getExternalFileDir(context, LOGGER);
 	}
 	
-	public static File getExternalFileDir(Context context, String fileName) {
+	/**
+	 * 获取沙盒中的文件夹地址
+	 * @param context
+	 * @param fileName 文件夹的名称
+	 * @return
+	 */
+	private static File getExternalFileDir(Context context, String fileName) {
 		File fileDir = new File(getExternalPackageDir(context), fileName);
 		if (!fileDir.exists()) {
 			if (!fileDir.mkdirs()) {
 				FFLogger.i(FFDiskUtil.class.getName(), "Unable to create external cache directory");
-				return null;
+				return new File(getExternalPackageDir(context), fileName);
 			}
 			try {
 				new File(fileDir, ".nomedia").createNewFile();
@@ -62,11 +83,20 @@ public class FFDiskUtil {
 		return fileDir;
 	}
 	
-	public static File getExternalPackageDir(Context context) {
+	/**
+	 * 获取app沙盒地址
+	 * @param context
+	 * @return
+	 */
+	private static File getExternalPackageDir(Context context) {
 		return new File(getExternalDataDir(), context.getPackageName());
 	}
 	
-	public static File getExternalDataDir() {
+	/**
+	 * 获取沙盒地址
+	 * @return
+	 */
+	private static File getExternalDataDir() {
 		File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
 		return dataDir;
 	}

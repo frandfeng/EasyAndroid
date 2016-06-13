@@ -31,6 +31,13 @@ import com.frand.easyandroid.util.FFFieldUtil;
 
 public class FFUpdateSqlBuilder extends FFSqlBuilder {
 
+	public FFUpdateSqlBuilder() {
+	}
+
+	public FFUpdateSqlBuilder(String tableName) {
+		super.tableName = tableName;
+	}
+
 	@Override
 	public void onPreGetStatement() throws FFDBException,
 			IllegalArgumentException, IllegalAccessException {

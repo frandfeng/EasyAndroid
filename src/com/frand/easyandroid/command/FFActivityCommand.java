@@ -23,7 +23,8 @@ public class FFActivityCommand extends FFCommand {
 	protected void executeCommand() {
 		FFRequest request = getRequest();
 		FFResponse response = new FFResponse(request.getRequestKey(),
-				request.isDestroyBefore());
+				request.isDestroyBefore(), request.getRequestBundle(),
+				request.getInAnim(), request.getOutAnim());
 		setResponse(response);
 		notifyListener(true);
 	}

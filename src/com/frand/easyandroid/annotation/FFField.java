@@ -22,19 +22,23 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * 属性的注解
+ * @author frand
+ *
+ */
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)
 public @interface FFField {
+	
 	/**
 	 * 设置配置的名
-	 * 
 	 * @return
 	 */
 	public String name() default "";
 
 	/**
 	 * 设置配置的默认值
-	 * 
 	 * @return
 	 */
 	public String defaultValue() default "";

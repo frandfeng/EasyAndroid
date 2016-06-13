@@ -1,7 +1,9 @@
 package com.frand.easyandroid.data;
 
+import com.frand.easyandroid.db.annotation.FFTableName;
 import com.frand.easyandroid.db.annotation.FFTransient;
 
+@FFTableName(name="logcat")
 public class FFLogDataEntity extends FFBaseDataEntity {
 
 	@FFTransient

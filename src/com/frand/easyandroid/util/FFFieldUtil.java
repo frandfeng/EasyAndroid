@@ -30,9 +30,7 @@ public class FFFieldUtil {
 	
 	/**
 	 * 检测实体属性是否已经被标注为 不被识别
-	 * 
-	 * @param field
-	 *            字段
+	 * @param field 字段
 	 * @return
 	 */
 	public static boolean isTransient(Field field) {
@@ -41,7 +39,6 @@ public class FFFieldUtil {
 	
 	/**
 	 * 是否为基本的数据类型
-	 * 
 	 * @param field
 	 * @return
 	 */
@@ -61,7 +58,6 @@ public class FFFieldUtil {
 	
 	/**
 	 * 获得配置名
-	 * 
 	 * @param field
 	 * @return
 	 */

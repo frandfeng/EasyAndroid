@@ -15,18 +15,49 @@
  */
 package com.frand.easyandroid;
 
+import java.util.List;
+
 import com.frand.easyandroid.command.FFActivityCommand;
 import com.frand.easyandroid.command.FFIResponseListener;
 import com.frand.easyandroid.command.FFRequest;
+import com.frand.easyandroid.data.FFLogDataEntity;
+import com.frand.easyandroid.db.FFDB;
+import com.frand.easyandroid.helpers.BasePreferHelper;
+import com.frand.easyandroid.http.FFRequestParams;
 import com.frand.easyandroid.netstate.FFNetWorkUtil.netType;
+import com.frand.easyandroid.util.FFAppUtil;
+import com.frand.easyandroid.views.CustomToast;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-public abstract class FFActivity extends Activity {
+/**
+ * 所有Activity的基类，为activity自动加载和绑定view
+ * @author frand
+ *
+ */
+public abstract class FFActivity extends FragmentActivity {
+	
+	private ProgressDialog progress;
+	
+	public void showProgress() {
+		if(progress!=null&&progress.isShowing()) {
+			progress.dismiss();
+		}
+		progress = new ProgressDialog(this);
+		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progress.show();
+	}
+	
+	public void dismissProgress() {
+		if(progress!=null&&progress.isShowing()) {
+			progress.dismiss();
+		}
+	}
 	
 	private String moduleName = "";
 
@@ -53,20 +84,89 @@ public abstract class FFActivity extends Activity {
 
 	protected void onPreOnCreate(Bundle savedInstanceState) {
 		initResource();
+		lisenceProject();
 	}
 
 	protected void onAfterOnCreate(Bundle savedInstanceState) {
+		loadDefaultLayout();
 		getFFApplication().onActivityCreated(this);
 	}
 
 	protected void onAfterOnResume() {
 		getFFApplication().onActivityResumed();
+		if(moduleName.equals("Splash")) {
+			// 注册activity启动控制控制器
+			FFApplication.getApplication().registerCommand(FFActivityCommand.FFACTIVITYCOMMAND,
+					FFActivityCommand.class);
+		}
+		sendCrashReport();
 	}
 	
+	/**
+	 * 初始化资源信息
+	 */
 	private void initResource() {
 		initModuleName();
 		getFFApplication().getInjector().injectResource(this);
-		loadDefaultLayout();
+	}
+	
+	private void lisenceProject() {
+		if(FFApplication.prefer.getString(BasePreferHelper.STR_PROJECT_STATE, "1").equals("0")) {
+			CustomToast.toast(this, "此版本为测试版");
+		}
+	}
+	
+	private void sendCrashReport() {
+		if(!getClass().getName().equals(FFAppUtil.getPackageName(this)+".activities.SplashActivity")) {
+			return;
+		} else if (FFApplication.prefer.getString(BasePreferHelper.STR_ERROR_STATE, "1").equals("0")) {
+			return;
+		}
+		FFDB ffdb = FFApplication.getmFfdbPool().getFreeDB();
+		List<FFLogDataEntity> errorDataEntities = ffdb.query(
+				FFLogDataEntity.class, false, "", "", "", "", "");
+		FFApplication.getmFfdbPool().releaseDB(ffdb);
+		if(errorDataEntities!=null&&errorDataEntities.size()>0) {
+			FFLogDataEntity errorDataEntity = errorDataEntities.get(0);
+			FFRequestParams params = new FFRequestParams();
+			params.put("level", errorDataEntity.getLevel());
+			params.put("time", errorDataEntity.getTime());
+			params.put("tag", errorDataEntity.getTag());
+			String message = errorDataEntity.getMessage()==null?"":errorDataEntity.getMessage();
+			params.put("message", message.length()<2000?message:message.substring(0, 2000));
+			params.put("appVer", errorDataEntity.getAppVer());
+			params.put("brand", errorDataEntity.getBrand());
+			params.put("model", errorDataEntity.getModel());
+			params.put("systemVer", errorDataEntity.getSystemVer());
+			params.put("os", "2");
+			params.put("application", getPackageName());
+//			new BaseHttpHelper(this).request(ReqAPI.ERRORLOG, ReqType.GET, params, new FFStringRespHandler() {
+//				
+//				@Override
+//				public void onSuccess(String resp, int reqTag, String reqUrl) {
+//					FFLogger.d("frand", "req succ resp "+resp);
+//					FFDB ffdb = FFApplication.getmFfdbPool().getFreeDB();
+//					ffdb.delete(FFLogDataEntity.class, "");
+//					FFApplication.getmFfdbPool().releaseDB(ffdb);
+//				}
+//				
+//				@Override
+//				public void onStart(int reqTag, String reqUrl) {
+//					FFLogger.d("frand", "req url start:"+reqUrl);
+//				}
+//				
+//				@Override
+//				public void onFinish(int reqTag, String reqUrl) {
+//					FFLogger.d("frand", "req url finish:"+reqUrl);
+//				}
+//				
+//				@Override
+//				public void onFailure(Throwable error, int reqTag, String reqUrl) {
+//					FFLogger.e(getClass().getName(), FFStringUtil.getErrorInfo(error));
+//					error.printStackTrace();
+//				}
+//			});
+		}
 	}
 
 	@Override
@@ -92,7 +192,7 @@ public abstract class FFActivity extends Activity {
 	};
 
 	/**
-	 * 初始化模块名
+	 * 初始化模块名，根据模块名来加载layout
 	 */
 	private String initModuleName() {
 		String moduleName = this.moduleName;
@@ -120,32 +220,111 @@ public abstract class FFActivity extends Activity {
 
 	/**
 	 * 运行activity
-	 * 
 	 * @param activityResID
 	 */
-	public final void doActivity(String activityKey) {
+	public void doActivity(String activityKey) {
 		FFRequest request = new FFRequest(activityKey);
 		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
 	}
 	
 	/**
 	 * 运行activity
-	 * 
-	 * @param activityResID
+	 * @param activityKey
+	 * @param inAnim 新页面进入的动画
+	 * @param outAnim 旧页面退出的动画
 	 */
-	public final void doActivity(String activityKey, boolean record) {
-		FFRequest request = new FFRequest(activityKey, record);
+	public void doActivity(String activityKey, int inAnim, int outAnim) {
+		FFRequest request = new FFRequest(activityKey);
+		request.setInAnim(inAnim);
+		request.setOutAnim(outAnim);
+		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
+	}
+	
+	/**
+	 * 运行activity
+	 * @param activityKey
+	 * @param bundle 启动时携带的bunddle参数
+	 */
+	public void doActivity(String activityKey, Bundle bundle) {
+		FFRequest request = new FFRequest(activityKey);
+		request.setRequestBundle(bundle);
+		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
+	}
+	
+	/**
+	 * 运行activity
+	 * @param activityKey
+	 * @param bundle 启动时携带的bunddle参数
+	 * @param inAnim 新页面进入的动画
+	 * @param outAnim 旧页面退出的动画
+	 */
+	public void doActivity(String activityKey, Bundle bundle, int inAnim, int outAnim) {
+		FFRequest request = new FFRequest(activityKey);
+		request.setRequestBundle(bundle);
+		request.setInAnim(inAnim);
+		request.setOutAnim(outAnim);
+		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
+	}
+	
+	/**
+	 * 运行activity
+	 * @param activityKey
+	 * @param finishBefore 是否要关闭以前的activity
+	 */
+	public void doActivity(String activityKey, boolean finishBefore) {
+		FFRequest request = new FFRequest(activityKey, finishBefore);
+		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
+	}
+	
+	/**
+	 * 运行activity
+	 * @param activityKey
+	 * @param bundle 启动时携带的bunddle参数
+	 * @param finishBefore 是否要关闭以前的activity
+	 */
+	public void doActivity(String activityKey, Bundle bundle, boolean finishBefore) {
+		FFRequest request = new FFRequest(activityKey, finishBefore);
+		request.setRequestBundle(bundle);
+		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
+	}
+	
+	/**
+	 * 运行activity
+	 * @param activityKey
+	 * @param bundle 启动时携带的bunddle参数
+	 * @param finishBefore 是否要关闭以前的activity
+	 * @param inAnim 新页面进入的动画
+	 * @param outAnim 旧页面退出的动画
+	 */
+	public void doActivity(String activityKey, Bundle bundle,
+			boolean finishBefore, int inAnim, int outAnim) {
+		FFRequest request = new FFRequest(activityKey, finishBefore);
+		request.setRequestBundle(bundle);
+		request.setInAnim(inAnim);
+		request.setOutAnim(outAnim);
 		doCommand(FFActivityCommand.FFACTIVITYCOMMAND, request);
 	}
 
-	public final void doCommand(String commandKey, FFRequest request) {
+	/**
+	 * 开始执行命令
+	 * @param commandKey 命令的唯一主键
+	 * @param request 命令的主要内容
+	 */
+	public void doCommand(String commandKey, FFRequest request) {
 		doCommand(commandKey, request, null);
 	}
 
-	public final void doCommand(String commandKey, FFRequest request,
+	/**
+	 * 开始执行命令
+	 * @param commandKey 命令的唯一主键
+	 * @param request 命令的主要内容
+	 * @param listener 执行命令完成后的回调
+	 */
+	public void doCommand(String commandKey, FFRequest request,
 			FFIResponseListener listener) {
 		getFFApplication().doCommand(commandKey, request, listener);
 	}
+	
 	/**
 	 * 网络连接连接时调用
 	 */
@@ -174,12 +353,11 @@ public abstract class FFActivity extends Activity {
 		getFFApplication().exitApp(isBackground);
 	}
 
-	public final View getContentView() {
+	/**
+	 * 获取activity的主页面
+	 * @return
+	 */
+	public View getContentView() {
 		return ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-	}
-
-	@Override
-	public void onBackPressed() {
-		finish();
 	}
 }

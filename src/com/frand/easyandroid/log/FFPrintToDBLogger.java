@@ -21,7 +21,6 @@ public class FFPrintToDBLogger implements FFILogger {
 	public static final int INFO = 3;
 	public static final int WARN = 4;
 	public static final int ERROR = 5;
-	private FFDB ffdb;
 	private Context context;
 
 	public FFPrintToDBLogger(Context context) {
@@ -30,22 +29,22 @@ public class FFPrintToDBLogger implements FFILogger {
 	
 	@Override
 	public void v(String tag, String message) {
-//		println(VERBOSE, tag, message);
+		println(VERBOSE, tag, message);
 	}
 
 	@Override
 	public void d(String tag, String message) {
-//		println(DEBUG, tag, message);
+		println(DEBUG, tag, message);
 	}
 
 	@Override
 	public void i(String tag, String message) {
-//		println(INFO, tag, message);
+		println(INFO, tag, message);
 	}
 
 	@Override
 	public void w(String tag, String message) {
-//		println(WARN, tag, message);
+		println(WARN, tag, message);
 	}
 
 	@Override
@@ -55,13 +54,13 @@ public class FFPrintToDBLogger implements FFILogger {
 
 	@Override
 	public void open() {
-		ffdb = FFApplication.getApplication().getmFfdbPool().getFreeDB();
+		FFDB ffdb = FFApplication.getmFfdbPool().getFreeDB();
 		ffdb.createTable(FFLogDataEntity.class);
+		FFApplication.getmFfdbPool().releaseDB(ffdb);
 	}
 
 	@Override
 	public void close() {
-		ffdb.close();
 	}
 
 	@Override
@@ -86,14 +85,18 @@ public class FFPrintToDBLogger implements FFILogger {
 		default:
 			break;
 		}
-		logDataEntity.setTime(FFDateUtil.getFormattedDate());
-		logDataEntity.setApplication(context.getPackageName());
-		logDataEntity.setTag(tag);
-		logDataEntity.setMessage(message);
-		logDataEntity.setAppVer(FFAppUtil.getAppVersionName(context));
-		logDataEntity.setBrand(Build.BRAND);
-		logDataEntity.setModel(Build.MODEL);
-		logDataEntity.setSystemVer(Build.VERSION.RELEASE);
-		ffdb.insert(logDataEntity);
+		if(logDataEntity.getLevel().equals("E")) {
+			logDataEntity.setTime(FFDateUtil.getFormattedDate());
+			logDataEntity.setApplication(context.getPackageName());
+			logDataEntity.setTag(tag);
+			logDataEntity.setMessage(message);
+			logDataEntity.setAppVer(FFAppUtil.getAppVersionName(context));
+			logDataEntity.setBrand(Build.BRAND);
+			logDataEntity.setModel(Build.MODEL);
+			logDataEntity.setSystemVer(Build.VERSION.RELEASE);
+			FFDB ffdb = FFApplication.getmFfdbPool().getFreeDB();
+			ffdb.insert(logDataEntity);
+			FFApplication.getmFfdbPool().releaseDB(ffdb);
+		}
 	}
 }

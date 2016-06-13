@@ -24,7 +24,14 @@ import com.frand.easyandroid.exception.FFDBException;
 import com.frand.easyandroid.util.FFFieldUtil;
 
 public class FFDeleteSqlBuilder extends FFSqlBuilder {
+
+	public FFDeleteSqlBuilder() {
+	}
 	
+	public FFDeleteSqlBuilder(String tableName) {
+		super.tableName = tableName;
+	}
+
 	@Override
 	public String buildSql() throws FFDBException, IllegalArgumentException,IllegalAccessException {
 		StringBuilder stringBuilder = new StringBuilder(256);

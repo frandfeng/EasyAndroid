@@ -18,7 +18,6 @@ package com.frand.easyandroid.db;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.frand.easyandroid.db.FFDBHelper.FFDBListener;
 import com.frand.easyandroid.log.FFLogger;
 
 import android.app.Application;
@@ -141,7 +140,7 @@ public class FFDBPool {
 		FFDB ffdb = new FFDB(context, dbName, dbVersion, mListener);
 		ffdb.openDatabase(isWrite);
 		ffdbs.addElement(ffdb);
-		FFLogger.i(this, "one ffdb has been created and it's path is"+ffdb.getmSQLiteDatabase().getPath());
+		FFLogger.i(this, "one ffdb has been created");
 	}
 
 	/**
@@ -150,7 +149,6 @@ public class FFDBPool {
 	 * 
 	 * @return 返回一个可用的数据库连接对象
 	 */
-
 	public synchronized FFDB getFreeDB() {
 		FFDB sqliteDatabase = getFreeDBOrCreate();
 		while (sqliteDatabase == null) {
@@ -169,6 +167,7 @@ public class FFDBPool {
 	private FFDB getFreeDBOrCreate() {
 		FFDB sqLiteDatabase = findFreeDBInPool();
 		if (sqLiteDatabase == null) {
+			FFLogger.d("frand", "not found free, create db size "+increDBNum);
 			createDB(increDBNum, dbName, dbVersion);
 			sqLiteDatabase = findFreeDBInPool();
 		}
@@ -182,6 +181,7 @@ public class FFDBPool {
 	 */
 	private FFDB findFreeDBInPool() {
 		FFDB ffdb = null;
+		FFLogger.d("frand", "now db size "+ffdbs.size());
 		Enumeration<FFDB> enumerate = ffdbs.elements();
 		while (enumerate.hasMoreElements()) {
 			FFDB mFfdb = (FFDB) enumerate.nextElement();

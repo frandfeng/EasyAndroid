@@ -25,6 +25,13 @@ public class FFQuerySqlBuilder extends FFSqlBuilder {
 	
 	protected Pattern sLimitPattern = Pattern.compile("\\s*\\d+\\s*(,\\s*\\d+\\s*)?");
 
+	public FFQuerySqlBuilder() {
+	}
+
+	public FFQuerySqlBuilder(String tableName) {
+		super.tableName = tableName;
+	}
+
 	@Override
 	public String buildSql() throws FFDBException, IllegalArgumentException,
 			IllegalAccessException {

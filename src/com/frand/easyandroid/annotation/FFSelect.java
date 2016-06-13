@@ -20,11 +20,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 项目选择和为选择操作的注解
+ * @author frand
+ *
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FFSelect {
 
+	/**
+	 * 选择了项目之后执行的方法
+	 * @return
+	 */
 	public String selected();
+	/**
+	 * 未选中项目执行的方法
+	 * @return
+	 */
 	public String noSelected() default "";
 
 }

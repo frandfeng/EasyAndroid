@@ -29,6 +29,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+/**
+ * 反射OnClickListener, OnItemClickListener, OnItemLongClickListener,
+ * 		OnItemSelectedListener, OnLongClickListener
+ * @author frand
+ *
+ */
 public class FFEventListener implements OnClickListener, OnItemClickListener,
 		OnItemLongClickListener, OnItemSelectedListener, OnLongClickListener {
 
@@ -54,6 +60,13 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 		invokeClickMethod(handler, clickMethod, v);
 	}
 
+	/**
+	 * 反射onClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
 	private static Object invokeClickMethod(Object handler, String methodName,
 			Object... params) {
 		if (handler == null)
@@ -82,6 +95,13 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 		return invokeLongClickMethod(handler, longClickMethod, v);
 	}
 
+	/**
+	 * 反射onLongClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
 	private static boolean invokeLongClickMethod(Object handler,
 			String methodName, Object... params) {
 		if (handler == null)
@@ -113,6 +133,13 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 		invokeItemClickMethod(handler, itemClickMethod, arg0, arg1, arg2, arg3);
 	}
 
+	/**
+	 * 反射onItemClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
 	private static void invokeItemClickMethod(Object handler,
 			String methodName, Object... params) {
 		if (handler == null)
@@ -144,6 +171,13 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 				arg1, arg2, arg3);
 	}
 
+	/**
+	 * 反射onItemLongClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
 	private static boolean invokeItemLongClickMethod(Object handler,
 			String itemLongClickMethod, Object... params) {
 		if (handler == null)
@@ -184,9 +218,16 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
-		invokeItemNoSelectkMethod(handler, itemNoSelectMethod, arg0);
+		invokeItemNoSelectMethod(handler, itemNoSelectMethod, arg0);
 	}
 
+	/**
+	 * 反射onItemSelectClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
 	private static void invokeItemSelectkMethod(Object handler,
 			String itemSelectMethod, Object... params) {
 		if (handler == null)
@@ -205,7 +246,14 @@ public class FFEventListener implements OnClickListener, OnItemClickListener,
 		}
 	}
 
-	private static void invokeItemNoSelectkMethod(Object handler,
+	/**
+	 * 反射onItemNoSelectClick方法
+	 * @param handler 反射方法的对象、承载者
+	 * @param methodName 要反射的方法的名称
+	 * @param params 反射的参数
+	 * @return
+	 */
+	private static void invokeItemNoSelectMethod(Object handler,
 			String itemNoSelectMethod, Object... params) {
 		if (handler == null)
 			return;

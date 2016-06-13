@@ -22,6 +22,7 @@ import com.frand.easyandroid.exception.FFDBException;
 import com.frand.easyandroid.util.FFStringUtil;
 
 public class FFInsertSqlBuilder extends FFSqlBuilder {
+
 	@Override
 	public void onPreGetStatement() throws FFDBException,
 			IllegalArgumentException, IllegalAccessException {

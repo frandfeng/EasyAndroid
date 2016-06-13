@@ -172,12 +172,16 @@ public class FFDBUtils {
 	 * @return 创建表的sql语句
 	 * @throws FFDBException
 	 */
-	public static String creatTableSql(Class<?> clazz) throws FFDBException {
+	public static String creatTableSql(Class<?> clazz, String tableName) throws FFDBException {
 		FFTableInfoEntity tableInfoEntity = FFTableUtil.getTableInfoEntity(clazz);
 		FFPKProperyEntity pkProperyEntity = tableInfoEntity.getPkProperyEntity();
 		StringBuffer strSQL = new StringBuffer();
 		strSQL.append("CREATE TABLE IF NOT EXISTS ");
-		strSQL.append(tableInfoEntity.getTableName());
+		if(tableName!=null&&!tableName.equals("")) {
+			strSQL.append(tableName);
+		} else {
+			strSQL.append(tableInfoEntity.getTableName());
+		}
 		strSQL.append(" ( ");
 		if (pkProperyEntity != null) {
 			strSQL.append("\"").append(pkProperyEntity.getColumnName()).append("\" ");

@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
-import com.frand.easyandroid.db.FFDBHelper.FFDBListener;
 import com.frand.easyandroid.db.entity.FFArrayList;
 import com.frand.easyandroid.db.entity.FFDBMasterEntity;
 import com.frand.easyandroid.db.entity.FFHashMap;
@@ -48,14 +47,6 @@ public class FFDB {
 
 	public void setBusy(boolean isBusy) {
 		this.isBusy = isBusy;
-	}
-
-	public SQLiteDatabase getmSQLiteDatabase() {
-		return mSQLiteDatabase;
-	}
-
-	public void setmSQLiteDatabase(SQLiteDatabase mSQLiteDatabase) {
-		this.mSQLiteDatabase = mSQLiteDatabase;
 	}
 
 	/**
@@ -155,9 +146,19 @@ public class FFDB {
 	 * @return 为true创建成功，为false创建失败
 	 */
 	public Boolean createTable(Class<?> clazz) {
+		return createTable(clazz, null);
+	}
+	
+	/**
+	 * 创建表
+	 * 
+	 * @param clazz
+	 * @return 为true创建成功，为false创建失败
+	 */
+	public Boolean createTable(Class<?> clazz, String tableName) {
 		Boolean isSuccess = false;
 		try {
-			sqlString = FFDBUtils.creatTableSql(clazz);
+			sqlString = FFDBUtils.creatTableSql(clazz, tableName);
 			isSuccess = execute(sqlString, null);
 		} catch (FFDBException e) {
 			isSuccess = false;
@@ -238,13 +239,25 @@ public class FFDB {
 	 * 插入记录
 	 * 
 	 * @param entity
+	 *            插入的实体
+	 * @return
+	 */
+	public Boolean insert(Object entity, String tableName) {
+		return insert(entity, null, tableName);
+	}
+	
+	/**
+	 * 插入记录
+	 * 
+	 * @param entity
 	 *            传入数据实体
 	 * @param updateFields
 	 *            插入到的字段,可设置为空
 	 * @return 返回true执行成功，否则执行失败
 	 */
-	public Boolean insert(Object entity, FFArrayList updateFields) {
-		FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.INSERT);
+	public Boolean insert(Object entity, FFArrayList updateFields, String tableName) {
+		FFSqlBuilder sqlBuilder = null;
+		sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.INSERT, tableName);
 		sqlBuilder.setEntity(entity);
 		sqlBuilder.setUpdateFields(updateFields);
 		return execute(sqlBuilder);
@@ -299,8 +312,18 @@ public class FFDB {
 	 * @return 返回true执行成功，否则执行失败
 	 */
 	public Boolean delete(Object entity) {
+		return delete(entity, null);
+	}
+	
+	/**
+	 * 删除记录
+	 * 
+	 * @param entity
+	 * @return 返回true执行成功，否则执行失败
+	 */
+	public Boolean delete(Object entity, String tableName) {
 		if (mSQLiteDatabase.isOpen()) {
-			FFSqlBuilder getSqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.DELETE);
+			FFSqlBuilder getSqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.DELETE, tableName);
 			getSqlBuilder.setEntity(entity);
 			return execute(getSqlBuilder);
 		} else {
@@ -318,7 +341,7 @@ public class FFDB {
 	 */
 	public Boolean delete(Class<?> clazz, String where) {
 		if (mSQLiteDatabase.isOpen()) {
-			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.DELETE);
+			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.DELETE, null);
 			sqlBuilder.setClazz(clazz);
 			sqlBuilder.setCondition(false, where, null, null, null, null);
 			return execute(sqlBuilder);
@@ -341,7 +364,6 @@ public class FFDB {
 	public Boolean delete(String table, String whereClause, String[] whereArgs) {
 		if (mSQLiteDatabase.isOpen()) {
 			return mSQLiteDatabase.delete(table, whereClause, whereArgs) > 0;
-
 		} else {
 			FFLogger.e(FFDB.this, "数据库未打开！");
 			return false;
@@ -370,7 +392,7 @@ public class FFDB {
 	 */
 	public Boolean update(Object entity, String where) {
 		if (mSQLiteDatabase.isOpen()) {
-			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.UPDATE);
+			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.UPDATE, null);
 			sqlBuilder.setEntity(entity);
 			sqlBuilder.setCondition(false, where, null, null, null, null);
 			return execute(sqlBuilder);
@@ -398,6 +420,26 @@ public class FFDB {
 			FFLogger.e(FFDB.this, "数据库未打开！");
 			return false;
 		}
+	}
+	
+	/**
+	 * 执行查询，主要是SELECT, SHOW 等指令 返回数据集
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public <T> List<T> query(Class<?> clazz) {
+		return query(clazz, "", false, "", "", "", "", "");
+	}
+	
+	/**
+	 * 执行查询，主要是SELECT, SHOW 等指令 返回数据集
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public <T> List<T> query(Class<?> clazz, String tableName) {
+		return query(clazz, tableName, false, "", "", "", "", "");
 	}
 
 	/**
@@ -492,6 +534,7 @@ public class FFDB {
 			sqlCursor = mSQLiteDatabase.query(distinct, table, columns,
 					selection, selectionArgs, groupBy, having, orderBy, limit);
 			if (sqlCursor != null) {
+				isBusy = false;
 				return getQueryCursorData();
 			} else {
 				FFLogger.e(FFDB.this, "查询" + table + "错误");
@@ -499,6 +542,7 @@ public class FFDB {
 		} else {
 			FFLogger.e(FFDB.this, "数据库未打开！");
 		}
+		isBusy = false;
 		return null;
 	}
 
@@ -530,6 +574,7 @@ public class FFDB {
 			sqlCursor = mSQLiteDatabase.query(table, columns, selection,
 					selectionArgs, groupBy, having, orderBy, limit);
 			if (sqlCursor != null) {
+				isBusy = false;
 				return getQueryCursorData();
 			} else {
 				FFLogger.e(FFDB.this, "查询" + table + "错误");
@@ -537,6 +582,7 @@ public class FFDB {
 		} else {
 			FFLogger.e(FFDB.this, "数据库未打开！");
 		}
+		isBusy = false;
 		return null;
 	}
 
@@ -573,6 +619,7 @@ public class FFDB {
 					distinct, table, columns, selection, selectionArgs,
 					groupBy, having, orderBy, limit);
 			if (sqlCursor != null) {
+				isBusy = false;
 				return getQueryCursorData();
 			} else {
 				FFLogger.e(FFDB.this, "查询" + table + "错误");
@@ -580,10 +627,15 @@ public class FFDB {
 		} else {
 			FFLogger.e(FFDB.this, "数据库未打开！");
 		}
+		isBusy = false;
 		return null;
 
 	}
-
+	
+	public <T> List<T> query(Class<?> clazz, boolean distinct, String where,
+			String groupBy, String having, String orderBy, String limit) {
+		return query(clazz, "", distinct, where, groupBy, having, orderBy, limit);
+	}
 	/**
 	 * 执行查询，主要是SELECT, SHOW 等指令 返回数据集
 	 * 
@@ -603,11 +655,11 @@ public class FFDB {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> query(Class<?> clazz, boolean distinct, String where,
+	public <T> List<T> query(Class<?> clazz, String tableName, boolean distinct, String where,
 			String groupBy, String having, String orderBy, String limit) {
 		List<T> list = null;
 		if (mSQLiteDatabase.isOpen()) {
-			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.SELECT);
+			FFSqlBuilder sqlBuilder = FFSqlUtil.getSqlBuilder(FFSqlUtil.SELECT, tableName);
 			sqlBuilder.setClazz(clazz);
 			sqlBuilder.setCondition(distinct, where, groupBy, having, orderBy, limit);
 			try {
@@ -622,6 +674,7 @@ public class FFDB {
 		} else {
 			FFLogger.e(this, "数据库未打开");
 		}
+		isBusy = false;
 		return list;
 	}
 	
@@ -665,6 +718,7 @@ public class FFDB {
 			isSuccess = false;
 			e.printStackTrace();
 		}
+		isBusy = false;
 		return isSuccess;
 	}
 	
@@ -691,6 +745,7 @@ public class FFDB {
 		} else {
 			isSucc = false;
 		}
+		isBusy = false;
 		return isSucc;
 	}
 

@@ -20,9 +20,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * view的资源以及方法注解
+ * @author frand
+ *
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FFViewInject {
+	
 	/** View的ID */
 	public int id() default -1;
 

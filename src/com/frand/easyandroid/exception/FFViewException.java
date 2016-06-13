@@ -15,6 +15,8 @@
  */
 package com.frand.easyandroid.exception;
 
+import com.frand.easyandroid.log.FFLogger;
+
 import android.text.TextUtils;
 
 public class FFViewException extends FFException {
@@ -29,7 +31,7 @@ public class FFViewException extends FFException {
 	@Override
 	public void printStackTrace() {
 		if (strMsg!=null&&!TextUtils.isEmpty(strMsg)) {
-			System.out.println(strMsg);
+			FFLogger.d(this, strMsg);
 		}
 		super.printStackTrace();
 	}

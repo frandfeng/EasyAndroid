@@ -15,61 +15,53 @@
  */
 package com.frand.easyandroid.util;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 import com.frand.easyandroid.FFApplication;
-import com.frand.easyandroid.log.FFLogger;
+import com.frand.easyandroid.util.FFAppUtil.AppInfo;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.util.Log;
 
-import dalvik.system.DexFile;
-import dalvik.system.PathClassLoader;
-
-/** 
- * @author frandfeng
- * @time 2014-4-8 上午11:07:56 
- * class description 
+/**
+ * @author frandfeng 扫面并注册所有的Activity
+ * @time 2014-4-8 上午11:07:56 class description
  */
-public class FFActivityScanner {
-	
-	private static Field dexField;
+public class FFActivityScanner extends Thread {
+
 	private Context mContext;
-	
-	static {
-		try {
-			dexField = PathClassLoader.class.getDeclaredField("mDexs");
-			dexField.setAccessible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	public FFActivityScanner(Context mContext) {
 		this.mContext = mContext;
 	}
-	
-	public void run() {
-		try {
-	        DexFile df = new DexFile(mContext.getPackageCodePath());
-	        for (Enumeration<String> iter = df.entries(); iter.hasMoreElements();) {
-	            String className = iter.nextElement();
-	            String matchString = "^("+mContext.getPackageName().replace(".", "[.]")+"[.]activities[.].*?Activity)(\\$[0-9])*$";
-				Matcher matcher = Pattern.compile(matchString).matcher(className);
-				if(matcher.find()) {
-					String key = matcher.group(1);
-		            FFLogger.i(this, "register activity "+key);
-					FFApplication.getApplication().registerActivity(key, Class.forName(key));
-				}
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
 
+	@Override
+	public void run() {
+		List<AppInfo> infos = FFAppUtil.getAllApps(mContext);
+        for(int i=0; i<infos.size(); i++) {
+        	AppInfo info = infos.get(i);
+        	try {
+				PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(
+						info.getPackageName(), PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_ACTIVITIES);
+				ActivityInfo[] activityInfos = packageInfo.activities;
+				if(activityInfos != null && activityInfos.length > 0) {
+		            if(packageInfo.packageName.equals(FFAppUtil.getPackageName(mContext))) {
+		            	for(int j=0; j<activityInfos.length; j++) {
+		            		ActivityInfo activityInfo = activityInfos[j];
+		            		FFApplication.getApplication().registerActivity(activityInfo.name,
+		            				 Class.forName(activityInfo.name));
+		            	}
+		            }
+				}
+			} catch (NameNotFoundException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+        }
+	}
 }

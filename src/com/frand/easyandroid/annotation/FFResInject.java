@@ -21,8 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 资源的注解
+ * @author frand
+ *
+ */
 @Target({ ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FFResInject {
+	
+	/**
+	 * 资源的id
+	 * @return
+	 */
 	int id() default -1;
 }

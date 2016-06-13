@@ -24,6 +24,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 
 public class FFAppManager {
+	
 	private Stack<Activity> activityStack;
 	private static FFAppManager instance;
 
@@ -114,11 +115,8 @@ public class FFAppManager {
 
 	/**
 	 * 退出应用程序
-	 * 
 	 * @param context
-	 *            上下文
-	 * @param isBackground
-	 *            是否开开启后台运行
+	 * @param isBackground 是否开开启后台运行
 	 */
 	public void AppExit(Context context, Boolean isBackground) {
 		try {

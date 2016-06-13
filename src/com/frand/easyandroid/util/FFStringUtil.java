@@ -29,7 +29,6 @@ public class FFStringUtil {
 
 	/**
 	 * 判断是否为数字
-	 * 
 	 * @param str
 	 * @return
 	 */
@@ -44,16 +43,53 @@ public class FFStringUtil {
 	}
 	
 	/** 
+     * 手机号验证 
+     * @param  str 
+     * @return 验证通过返回true 
+     */  
+    public static boolean isMobile(String str) {   
+        Pattern p = null;  
+        Matcher m = null;  
+        boolean b = false;   
+        p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$"); // 验证手机号  
+        m = p.matcher(str);  
+        b = m.matches();   
+        return b;  
+    }
+    
+    /**
+     * 判断是否符合email格式 
+     * @param email
+     * @return
+     */
+    public static boolean isEmail(String email) {
+    	String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
+    	Pattern p = Pattern.compile(str);
+    	Matcher m = p.matcher(email);
+    	return m.matches();
+    }
+    
+    /**
+     * 将传入的string裁剪前几个字符
+     * @param string 传入的string
+     * @param trim 裁剪字符的数量
+     * @return
+     */
+	public static String trim(String string, int trim) {
+		return string.length()>trim?string.substring(0, trim):string;
+	}
+	
+	/** 
      * 获取错误的信息  
      * @param arg1 
      * @return 
      */  
-	public static String getErrorInfo(Throwable arg1) {  
-        Writer writer = new StringWriter();  
-        PrintWriter pw = new PrintWriter(writer);  
-        arg1.printStackTrace(pw);  
-        pw.close();  
-        String error= writer.toString();  
-        return error;  
+	public static String getErrorInfo(Throwable arg1) {
+        Writer writer = new StringWriter();
+        PrintWriter pw = new PrintWriter(writer);
+        arg1.printStackTrace(pw);
+        pw.close();
+        String error= writer.toString();
+        return error;
     }
 }

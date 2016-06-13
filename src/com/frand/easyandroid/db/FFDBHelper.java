@@ -25,13 +25,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class FFDBHelper extends SQLiteOpenHelper {
 
 	/**
-	 * Interface 数据库升级回调
-	 */
-	public interface FFDBListener {
-		public void onCreate(SQLiteDatabase db);
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
-	}
-	/**
 	 * 数据库創建更新监听器
 	 */
 	private FFDBListener mListener;

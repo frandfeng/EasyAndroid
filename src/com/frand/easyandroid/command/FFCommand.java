@@ -26,7 +26,6 @@ public abstract class FFCommand extends FFBaseCommand {
 	protected final static int command_success = 4;
 	protected final static int command_finish = 5;
 	private FFIResponseListener listener;
-	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {

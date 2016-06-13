@@ -16,6 +16,7 @@
 package com.frand.easyandroid.util;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -26,6 +27,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 
 /** 
  * @author frandfeng
@@ -43,6 +49,36 @@ public class FFBackUtil {
 	 */
 	private static final int DRAW_DEEP = 25;
 	
+	public static void addClickedEffect(View view) {
+		final Drawable backDrawable = view.getBackground();
+		if(backDrawable instanceof BitmapDrawable) {
+			view.setBackgroundDrawable(getStateListDrawable(view.getBackground()));
+		} else {
+			view.setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View view, MotionEvent event) {
+					if(event.getAction()==MotionEvent.ACTION_DOWN) {
+						Drawable selecteDrawable = getSelectedDrawable(view.getBackground());
+						view.setBackgroundDrawable(selecteDrawable);
+					} else if (event.getAction()==MotionEvent.ACTION_UP) {
+						view.setBackgroundDrawable(backDrawable);
+					}
+					return false;
+				}
+			});
+		}
+	}
+	
+	public static StateListDrawable getStateListDrawable(Drawable normal) {
+		StateListDrawable listDrawable = new StateListDrawable();
+		Drawable pressed = getSelectedDrawable(normal);
+		listDrawable.addState(new int[] { android.R.attr.state_pressed }, pressed);
+		listDrawable.addState(new int[] { android.R.attr.state_selected }, pressed);
+		listDrawable.addState(new int[] { android.R.attr.state_enabled }, normal);
+		return listDrawable;
+	}
+	
 	/**
 	 * 传入一个drawable，将此drawable颜色加深组成一个drawable返回，此函数经常用于为button设置按下效果
 	 * @param mDrawable 传入的drawable，类型可以为bitmapDrawable/ColorDrawable/GradientDrawable
@@ -50,15 +86,16 @@ public class FFBackUtil {
 	 *     levelListDrawable/PaintDrawable/PictureDrawable/RotateDrawable/未设置
 	 * @return 返回的drawable，将其直接赋值给button的backgroundDrawable
 	 */
-	public static Drawable getSelectedDrawable(Drawable mDrawable) {
+	private static Drawable getSelectedDrawable(Drawable mDrawable) {
 		Drawable resultDrawable = null;
 		if(mDrawable instanceof BitmapDrawable) {
 			resultDrawable = getSelectedDrawable((BitmapDrawable) mDrawable);
-		} else if (mDrawable instanceof ColorDrawable) {
+		} else if (mDrawable instanceof ColorDrawable&&Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
 			resultDrawable = getSelectedDrawable((ColorDrawable) mDrawable);
 		} else if (mDrawable instanceof GradientDrawable) {
 			resultDrawable = getSelectedDrawable((GradientDrawable) mDrawable);
 		} else {
+			resultDrawable = mDrawable;
 		}
 		return resultDrawable;
 	}
@@ -91,7 +128,7 @@ public class FFBackUtil {
 	 * @param mDrawable 传入的drawable，类型为ColorDrawable
 	 * @return 返回的drawable，将其直接赋值给button的backgroundDrawable
 	 */
-	@SuppressLint("NewApi")
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private static Drawable getSelectedDrawable(ColorDrawable mDrawable) {
 		return new ColorDrawable(deepColor(mDrawable.getColor()));
 	}

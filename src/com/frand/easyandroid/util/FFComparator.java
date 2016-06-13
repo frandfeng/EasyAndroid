@@ -49,11 +49,8 @@ public class FFComparator<T> implements Comparator<T> {
 
 	/**
 	 * 带排序规则的与排序标识构造函数
-	 * 
-	 * @param sortType
-	 *            排序规则
-	 * @param sortFlag
-	 *            排序标识
+	 * @param sortType 排序规则
+	 * @param sortFlag 排序标识
 	 */
 	public FFComparator(int sortType, int sortFlag) {
 		this.sortType = sortType;
@@ -79,6 +76,13 @@ public class FFComparator<T> implements Comparator<T> {
 		}
 	}
 
+	/**
+	 * 获取对比对象的值
+	 * @param object
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
 	public int getCompareValue(T object) throws IllegalArgumentException,
 			IllegalAccessException {
 		int compareValue = 0;
