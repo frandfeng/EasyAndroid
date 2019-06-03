@@ -1,5 +1,4 @@
 现将此框架简单介绍一下，具体API文档见项目doc目录：
-
 一，IOC Module(From AFinal):
 
 1，对layout进行绑定
